@@ -1,6 +1,6 @@
-__author__ = 'Vinzenz Stadtmueller'
-__copyright__ = '(c) Edgelab e.U. 2016'
-__licence__ = 'Apache 2.0'
+__author__ = 'Oleg Butovich and Vinzenz Stadtmueller'
+__copyright__ = '(c) Oleg Butovich 2013-2016 and Edgelab e.U. 2016'
+__licence__ = 'MIT'
 
 from requests import Request, Session
 import os
@@ -74,7 +74,8 @@ class PyPdnsResource(PyPdnsResourceBase):
 
         s = Session()
 
-        req = Request(method, url, data=data, headers=self._store["api_key"], params=params)
+        req = Request(method, url, data=self._store["serializer"].dump(data), headers=self._store["api_key"],
+                      params=params)
         prepped = req.prepare()
 
         resp = s.send(prepped)
@@ -116,6 +117,9 @@ class JsonSerializer(object):
 
     def get_accept_types(self):
         return ", ".join(self.content_types)
+
+    def dump(self, data):
+        return json.dumps(data)
 
     def loads(self, response):
         try:
